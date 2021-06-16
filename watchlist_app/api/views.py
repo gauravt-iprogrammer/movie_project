@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 # from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework import generics
+from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
 # from rest_framework import mixins
 
 class ReviewList(generics.ListAPIView):
@@ -54,6 +56,26 @@ class ReviewCreate(generics.CreateAPIView):
 #     def delete(self, request, *args, **kwargs):
 #         return self.destroy(request, *args, **kwargs)
 
+# viewsets
+class StreamPlatformVS(viewsets.ViewSet):
+    def list(self, request):
+        queryset = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = StreamPlatform.objects.all()
+        watchlist = get_object_or_404(queryset, pk=pk)
+        serializer = StreamPlatformSerializer(watchlist)
+        return Response(serializer.data)
+    
+    def create(self, request):
+        serialize = StreamPlatformSerializer(data=request.data)
+        if serialize.is_valid():
+            serialize.save()
+            return Response(serialize.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Views for streaming  
