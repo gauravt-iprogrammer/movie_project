@@ -59,8 +59,8 @@ class StreamPlatformDetailsAV(APIView):
 class WatchListAV(APIView):
 
     def get(self, request):
-        movies = WatchList.objects.all()
-        serialize = WatchListSerializer(movies, many=True)
+        movie = WatchList.objects.all()
+        serialize = WatchListSerializer(movie, many=True)
         return Response(serialize.data)
 
     def post(self, request):
@@ -76,18 +76,18 @@ class WatchDetailsAV(APIView):
 
     def get(self, request, pk):
         try:
-            movies = WatchList.objects.get(pk=pk)
+            movie = WatchList.objects.get(pk=pk)
         
         except WatchList.DoesNotExist:
             return Response({"Error": "Data not available"}, status=status.HTTP_404_NOT_FOUND)
         
-        serialize = WatchListSerializer(movies)
+        serialize = WatchListSerializer(movie)
         return Response(serialize.data)
 
     def put(self, request, pk):
         
-        movies = WatchList.objects.get(pk=pk)
-        serialize = WatchListSerializer(movies, data=request.data)
+        movie= WatchList.objects.get(pk=pk)
+        serialize = WatchListSerializer(movie, data=request.data)
 
         if serialize.is_valid():
             serialize.save()
@@ -98,8 +98,8 @@ class WatchDetailsAV(APIView):
 
     def patch(self, request, pk):
 
-        movies = WatchList.objects.get(pk=pk)
-        serialize = WatchListSerializer(movies, data=request.data, partial=True)
+        movie = WatchList.objects.get(pk=pk)
+        serialize = WatchListSerializer(movie, data=request.data, partial=True)
 
         if serialize.is_valid():
             serialize.save()
@@ -108,8 +108,8 @@ class WatchDetailsAV(APIView):
             return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self,request, pk):
-        movies = WatchList.objects.get(pk=pk)
-        movies.delete()
+        movie = WatchList.objects.get(pk=pk)
+        movie.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
         
