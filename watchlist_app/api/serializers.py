@@ -1,22 +1,23 @@
 from rest_framework import serializers
-from watchlist_app.models import WatchList,StreamPlatform
-
+from watchlist_app.models import WatchList, StreamPlatform, Review 
 # Task done using ModelSerializer
 
-class StreamPlatformSerializer(serializers.ModelSerializer):
+
+class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = StreamPlatform
-        fields = "__all__"
+        model = Review
+        # fields = "__all__"
+        exclude = ('watchlist',)
 
 class WatchListSerializer(serializers.ModelSerializer):
-    len_of_names = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = WatchList
         
         # To display all fields
-        fields = "__all__" 
+        fields = "__all__"
 
         # To display some fields
         #fields = ['id','name','description']
@@ -26,26 +27,44 @@ class WatchListSerializer(serializers.ModelSerializer):
 
 
     # getting the length of name 
-    def get_len_of_names(self, object):
-        return len(object.title)
+    # def get_len_of_names(self, object):
+    #     return len(object.title)
     
     # Field level validation
-    def validate_name(self, value):
-        if len(value) < 2:
-            raise serializers.ValidationError("Title too shorttoo short")
-        else:
-            return value
+    # def validate_name(self, value):
+    #     if len(value) < 2:
+    #         raise serializers.ValidationError("Title too shorttoo short")
+    #     else:
+    #         return value
 
     # Object Level Validation
-    def validate(self, data):
+    # def validate(self, data):
         
-        # Comparing that name should not be same as description
-        if data['title'] == data['storyline']:
-            raise serializers.ValidationError("Title and Storline must not be same")
-        else:
-            return data
+    #     # Comparing that name should not be same as description
+    #     if data['title'] == data['storyline']:
+    #         raise serializers.ValidationError("Title and Storline must not be same")
+    #     else:
+    #         return data
 
+class StreamPlatformSerializer(serializers.ModelSerializer):
+    watchlist = WatchListSerializer(many=True, read_only=True)
+    
+    # It displays only string related fields
+    # watchlist =  serializers.StringRelatedField(many=True)
 
+    # It displayes only primary key related fields
+    # watchlist = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    # It displays url at the place of id
+    # watchlist = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     read_only=True,
+    #     view_name='stream-details'
+    # )
+    
+    class Meta:
+        model = StreamPlatform
+        fields = "__all__"
 
 
 
