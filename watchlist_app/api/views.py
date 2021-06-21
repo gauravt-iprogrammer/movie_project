@@ -28,7 +28,7 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
-
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return Review.objects.all()
 
@@ -81,6 +81,7 @@ class ReviewCreate(generics.CreateAPIView):
 class StreamPlatformVS(viewsets.ModelViewSet):
     queryset = StreamPlatform.objects.all()
     serializer_class = StreamPlatformSerializer
+    permission_classes = [AdminOrReadOnly]
 
 
 # viewsets
@@ -107,7 +108,7 @@ class StreamPlatformVS(viewsets.ModelViewSet):
 
 # Views for streaming  
 class StreamPlatformAV(APIView):
-    
+    permission_classes = [AdminOrReadOnly]
     def get(self, request):
         platform = StreamPlatform.objects.all()
         serialize = StreamPlatformSerializer(platform, many=True)
@@ -122,7 +123,7 @@ class StreamPlatformAV(APIView):
             return Response(serialize.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class StreamPlatformDetailsAV(APIView):
-    
+    permission_classes = [AdminOrReadOnly]
     def get(self, request, pk):
         try:
             platform = StreamPlatform.objects.get(pk=pk)
@@ -157,7 +158,7 @@ class StreamPlatformDetailsAV(APIView):
 
 # class based views
 class WatchListAV(APIView):
-
+    permission_classes = [AdminOrReadOnly]
     def get(self, request):
         movie = WatchList.objects.all()
         serialize = WatchListSerializer(movie, many=True)
@@ -173,7 +174,7 @@ class WatchListAV(APIView):
 
 
 class WatchDetailsAV(APIView):
-
+    permission_classes = [AdminOrReadOnly]
     def get(self, request, pk):
         try:
             movie = WatchList.objects.get(pk=pk)
