@@ -10,13 +10,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from watchlist_app.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, ScopedRateThrottle
+
+from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottle
 # from rest_framework import mixins
 
 class ReviewList(generics.ListAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
-    
+    # permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewListThrottle, AnonRateThrottle]
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Review.objects.filter(watchlist=pk)
@@ -25,10 +28,16 @@ class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [ReviewUserOrReadOnly]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "review-details"
+
 
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ReviewCreateThrottle]
+
+
     def get_queryset(self):
         return Review.objects.all()
 
@@ -159,6 +168,8 @@ class StreamPlatformDetailsAV(APIView):
 # class based views
 class WatchListAV(APIView):
     permission_classes = [AdminOrReadOnly]
+    throttle_classes = [UserRateThrottle]
+
     def get(self, request):
         movie = WatchList.objects.all()
         serialize = WatchListSerializer(movie, many=True)
