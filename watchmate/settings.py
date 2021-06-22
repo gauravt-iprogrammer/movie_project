@@ -156,7 +156,14 @@ REST_FRAMEWORK = {
         'review-create' : '1/day',
         'review-list' : '100/day',
         'review-details' : '200/day'
-    }
+    },
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 3,
+
+    # To hide browsable api
+    # 'DEFAULT_RENDERER_CLASSES':(
+    #     'rest_framework.renderers.JSONRenderer',
+    # ),
 }
 
 # SIMPLE_JWT = {

@@ -16,6 +16,7 @@ from watchlist_app.api.throttling import ReviewCreateThrottle, ReviewListThrottl
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from watchlist_app.api.pagination import WatchListPagination, WatchListLOPagination, WatchListCPagination
 # from rest_framework import mixins
 
 class UserReview(generics.ListAPIView):
@@ -197,8 +198,9 @@ class WatchListGV(generics.ListAPIView):
     # search_fields = ['title', 'platform__name']
 
     #---- Ordering filter--------------------
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ['avg_rating']
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = ['avg_rating']
+    pagination_class = WatchListCPagination
 
 class WatchListAV(APIView):
     permission_classes = [AdminOrReadOnly]
